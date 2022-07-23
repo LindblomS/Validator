@@ -1,10 +1,10 @@
 ﻿using Validator.Validators;
 using Validator.Extensions;
 
-var results = new ModelValidator().Validate(new("a", new("")));
+var failures = new ModelValidator().Validate(new("a", new("")));
 
-foreach (var result in results)
-    Console.WriteLine(result);
+foreach (var failure in failures)
+    Console.WriteLine(failure);
 
 Console.ReadKey();
 

@@ -3,7 +3,7 @@
 using Validator.Models;
 using System;
 
-internal class ConditionalValidator<TModel> : IConditionalValidator<TModel>
+internal class ConditionalValidator<TModel> : IValidator<TModel>
 {
     readonly Predicate<TModel> predicate;
 
@@ -14,6 +14,6 @@ internal class ConditionalValidator<TModel> : IConditionalValidator<TModel>
 
     public Result Validate(TModel model)
     {
-        return new("", "", predicate(model));
+        return predicate(model) ? Result.Success() : Result.Failure();
     }
 }

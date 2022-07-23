@@ -4,7 +4,7 @@ using Validator.Validators;
 
 public interface IValidatorBuilder<TModel>
 {
-    IReadOnlyCollection<IValidator<TModel>> Build();
+    IEnumerable<IValidator<TModel>> Build();
 }
 
 public interface IValidatorBuilder<TModel, TValue> : IValidatorBuilderWithMessage<TModel, TValue>

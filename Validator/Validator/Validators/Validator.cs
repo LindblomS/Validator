@@ -14,6 +14,9 @@ public abstract class Validator<TModel>
 
     public IValidatorBuilder<TModel, TValue> For<TValue>(Expression<GetValueDelegate<TModel, TValue>> getValueExpression)
     {
+        if (getValueExpression is null)
+            throw new ArgumentNullException(nameof(getValueExpression));
+
         var builder = new ValidatorBuilder<TModel, TValue>(
             getValueExpression.Compile(), 
             GetPropertyName(getValueExpression));
@@ -22,50 +25,51 @@ public abstract class Validator<TModel>
         return builder;
     }
 
-    public IReadOnlyCollection<Result> Validate(TModel model)
+    public IEnumerable<Failure> Validate(TModel model)
     {
-        var list = Builders.Select(builder => builder.Build());
-        var results = list.SelectMany(setOfValidators => Validate(setOfValidators, model)).ToList();
+        if (model is null)
+            return Enumerable.Empty<Failure>();
 
-        return results;
+        var list = Builders.Select(builder => builder.Build());
+
+        if (!list.Any())
+            throw new InvalidOperationException("No validators were found");
+
+        var failures = new List<Failure>();
+
+        foreach (var setOfValidators in list)
+            Validate(setOfValidators, model, failures);
+
+        return failures;
     }
 
-    static List<Result> Validate(IEnumerable<IValidator<TModel>> validators, TModel model)
+    static void Validate(IEnumerable<IValidator<TModel>> validators, TModel model, List<Failure> failures)
     {
-        var results = new List<Result>();
-
         foreach (var validator in validators)
         {
-            if (validator is IConditionalValidator<TModel>)
+            if (validator is ConditionalValidator<TModel>)
             {
-                if (validator.Validate(model).Valid)
+                if (validator.Validate(model) is Success)
                     continue;
 
-                return results;
+                return;
             }
 
             var result = validator.Validate(model);
 
-            if (!result.Valid)
+            if (result is Failure failure)
             {
-                results.Add(result);
-                return results;
+                failures.Add(failure);
+                return;
             }
         }
-
-        return results;
     }
 
-    static string GetPropertyName<TValue>(Expression<GetValueDelegate<TModel, TValue>> expression)
+    static PropertyName GetPropertyName<TValue>(Expression<GetValueDelegate<TModel, TValue>> expression)
     {
-        try
-        {
-            var expressionBody = (MemberExpression)expression.Body;
-            return expressionBody.Member.Name;
-        }
-        catch
-        {
-            return typeof(TModel).Name;
-        }
+        if (expression.Body is MemberExpression body)
+            return new PropertyName(body.Member.Name);
+
+        return new PropertyName(typeof(TModel).Name);
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using Validator.Delegates;
+using Validator.Models;
 using Validator.Validators;
 
 internal abstract class ValidatorBuilder<TModel>
@@ -13,7 +14,7 @@ internal abstract class ValidatorBuilder<TModel>
         validators = new();
     }
 
-    public IReadOnlyCollection<IValidator<TModel>> Build()
+    public IEnumerable<IValidator<TModel>> Build()
     {
         return validators;
     }
@@ -22,9 +23,9 @@ internal abstract class ValidatorBuilder<TModel>
 internal class ValidatorBuilder<TModel, TValue> : ValidatorBuilder<TModel>, IValidatorBuilder<TModel, TValue>
 {
     readonly GetValueDelegate<TModel, TValue> getValue;
-    readonly string propertyName;
+    readonly PropertyName propertyName;
 
-    public ValidatorBuilder(GetValueDelegate<TModel, TValue> getValue, string propertyName)
+    public ValidatorBuilder(GetValueDelegate<TModel, TValue> getValue, PropertyName propertyName)
     {
         this.getValue = getValue;
         this.propertyName = propertyName;
@@ -45,14 +46,14 @@ internal class ValidatorBuilder<TModel, TValue> : ValidatorBuilder<TModel>, IVal
     public IValidatorBuilderWithMessage<TModel, TValue> If(IValidatorBuilder<TModel> builder)
     {
         foreach (var validator in builder.Build())
-            validators.Add(new ConditionalValidator<TModel>(x => validator.Validate(x).Valid));
+            validators.Add(new ConditionalValidator<TModel>(model => validator.Validate(model) is Success));
 
         return this;
     }
 
     public IValidatorBuilderWithMessage<TModel, TValue> WithMessage(string message)
     {
-        if (validators.Last() is IValidator<TModel, TValue> validator)
+        if (validators.Last() is PredicateValidator<TModel, TValue> validator)
             validator.Message = message;
 
         return this;

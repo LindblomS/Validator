@@ -4,16 +4,16 @@ using Validator.Models;
 using System;
 using Validator.Delegates;
 
-internal class PredicateValidator<TModel, TValue> : IValidator<TModel, TValue>
+internal class PredicateValidator<TModel, TValue> : IValidator<TModel>
 {
     readonly GetValueDelegate<TModel, TValue> getValue;
     readonly Predicate<TValue> predicate;
-    readonly string propertyName;
+    readonly PropertyName propertyName;
 
     public PredicateValidator(
         GetValueDelegate<TModel, TValue> getValue,
-        Predicate<TValue> predicate, 
-        string propertyName)
+        Predicate<TValue> predicate,
+        PropertyName propertyName)
     {
         this.getValue = getValue;
         this.predicate = predicate;
@@ -25,6 +25,6 @@ internal class PredicateValidator<TModel, TValue> : IValidator<TModel, TValue>
     public Result Validate(TModel model)
     {
         var valid = predicate(getValue(model));
-        return new(valid ? "" : Message, propertyName, valid);
+        return valid ? Result.Success() : Result.Failure(Message, propertyName);
     }
 }

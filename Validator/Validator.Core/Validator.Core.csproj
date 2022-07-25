@@ -6,9 +6,4 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
-
-	<ItemGroup>
-		<ProjectReference Include="..\Validator.Core\Validator.Core.csproj" />
-	</ItemGroup>
-
 </Project>

@@ -1,10 +1,9 @@
-﻿namespace Validator.Builders;
-
-using Validator.Validators;
+﻿namespace Validator.Core.Builders;
+using Validator.Core.Validators;
 
 public interface IValidatorBuilder<TModel>
 {
-    IEnumerable<IValidator<TModel>> Build();
+    IEnumerable<IValidatable<TModel>> Build();
 }
 
 public interface IValidatorBuilder<TModel, TValue> : IValidatorBuilderWithMessage<TModel, TValue>

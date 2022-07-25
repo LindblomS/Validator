@@ -1,17 +1,17 @@
-﻿namespace Validator.Validators;
+﻿namespace Validator.Core.Validators;
 
-using Validator.Models;
 using System;
-using Validator.Delegates;
+using Validator.Core.Models;
+using Validator.Core.Delegates;
 
-internal class PredicateValidator<TModel, TValue> : IValidator<TModel>
+public class PredicateValidator<TModel, TValue> : IValidatable<TModel>
 {
-    readonly GetValueDelegate<TModel, TValue> getValue;
+    readonly GetValue<TModel, TValue> getValue;
     readonly Predicate<TValue> predicate;
     readonly PropertyName propertyName;
 
     public PredicateValidator(
-        GetValueDelegate<TModel, TValue> getValue,
+        GetValue<TModel, TValue> getValue,
         Predicate<TValue> predicate,
         PropertyName propertyName)
     {
@@ -24,7 +24,8 @@ internal class PredicateValidator<TModel, TValue> : IValidator<TModel>
 
     public Result Validate(TModel model)
     {
-        var valid = predicate(getValue(model));
-        return valid ? Result.Success() : Result.Failure(Message, propertyName);
+        return predicate(getValue(model))
+            ? Result.Success()
+            : Result.Failure(Message, propertyName);
     }
 }

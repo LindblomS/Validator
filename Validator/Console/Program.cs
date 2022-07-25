@@ -1,22 +1,26 @@
-﻿using Validator.Validators;
-using Validator.Extensions;
+﻿using Validator;
+using Validator.Core.Models;
 
-var failures = new ModelValidator().Validate(new("a", new("")));
+var result = new ModelValidator().Validate(new(1235, null, null));
 
-foreach (var failure in failures)
+foreach (var failure in result.Failures)
     Console.WriteLine(failure);
+
+var f = Result.Failure();
 
 Console.ReadKey();
 
 
 class Model
 {
-    public Model(string name, SubModel sub)
+    public Model(int some, string name, SubModel sub)
     {
+        Some = some;
         Name = name;
         Sub = sub;
     }
 
+    public int Some { get; set; }
     public string Name { get; set; }
     public SubModel Sub { get; set; }
 }
@@ -35,17 +39,6 @@ class ModelValidator : Validator<Model>
 {
     public ModelValidator()
     {
-        var modelIsNotNull = For(model => model).NotNull();
-
-        For(model => model.Name)
-            .If(modelIsNotNull)
-            .NotEmpty()
-            .NotEquals("abc");
-
-        var subModelIsNotNull = For(model => model.Sub).If(modelIsNotNull).NotNull();
-
-        For(model => model.Sub.Value)
-            .If(subModelIsNotNull)
-            .NotEmpty();
+        For(model => model.Some).LessThanOrEqualsTo(1234);
     }
 }

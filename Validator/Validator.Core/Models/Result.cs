@@ -1,5 +1,4 @@
-﻿namespace Validator.Models;
-
+﻿namespace Validator.Core.Models;
 public abstract class Result
 {
     public static Success Success()

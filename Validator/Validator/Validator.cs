@@ -1,18 +1,20 @@
-﻿namespace Validator.Validators;
+﻿namespace Validator;
 
-using Validator.Builders;
 using System.Collections.Generic;
 using System.Linq;
-using Validator.Models;
 using System.Linq.Expressions;
-using Validator.Delegates;
+using Validator.Core.Models;
+using Validator.Core.Delegates;
+using Validator.Core.Validators;
+using Validator.Core.Builders;
+using Validator.Models;
 
-public abstract class Validator<TModel>
+public abstract class Validator<TModel> : IValidator<TModel>
 {
     List<ValidatorBuilder<TModel>> builders;
     List<ValidatorBuilder<TModel>> Builders { get => builders ??= new(); }
 
-    public IValidatorBuilder<TModel, TValue> For<TValue>(Expression<GetValueDelegate<TModel, TValue>> getValueExpression)
+    public IValidatorBuilder<TModel, TValue> For<TValue>(Expression<GetValue<TModel, TValue>> getValueExpression)
     {
         if (getValueExpression is null)
             throw new ArgumentNullException(nameof(getValueExpression));
@@ -25,10 +27,10 @@ public abstract class Validator<TModel>
         return builder;
     }
 
-    public IEnumerable<Failure> Validate(TModel model)
+    public ValidationResult Validate(TModel model)
     {
         if (model is null)
-            return Enumerable.Empty<Failure>();
+            return ValidationResult.Empty();
 
         var list = Builders.Select(builder => builder.Build());
 
@@ -40,10 +42,10 @@ public abstract class Validator<TModel>
         foreach (var setOfValidators in list)
             Validate(setOfValidators, model, failures);
 
-        return failures;
+        return new ValidationResult(failures);
     }
 
-    static void Validate(IEnumerable<IValidator<TModel>> validators, TModel model, List<Failure> failures)
+    static void Validate(IEnumerable<IValidatable<TModel>> validators, TModel model, List<Failure> failures)
     {
         foreach (var validator in validators)
         {
@@ -65,11 +67,10 @@ public abstract class Validator<TModel>
         }
     }
 
-    static PropertyName GetPropertyName<TValue>(Expression<GetValueDelegate<TModel, TValue>> expression)
+    static PropertyName GetPropertyName<TValue>(Expression<GetValue<TModel, TValue>> expression)
     {
-        if (expression.Body is MemberExpression body)
-            return new PropertyName(body.Member.Name);
-
-        return new PropertyName(typeof(TModel).Name);
+        return expression.Body is MemberExpression body
+            ? new PropertyName(body.Member.Name)
+            : new PropertyName(typeof(TModel).Name);
     }
 }

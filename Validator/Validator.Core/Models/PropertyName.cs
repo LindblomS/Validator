@@ -1,11 +1,11 @@
-﻿namespace Validator.Models;
+﻿namespace Validator.Core.Models;
 
-public class PropertyName 
+public class PropertyName
 {
     public PropertyName(string propertyName)
     {
-        Value = !string.IsNullOrWhiteSpace(propertyName) 
-            ? propertyName 
+        Value = !string.IsNullOrWhiteSpace(propertyName)
+            ? propertyName
             : throw new ArgumentNullException(nameof(propertyName));
     }
 

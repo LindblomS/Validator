@@ -1,31 +1,32 @@
-﻿namespace Validator.Builders;
+﻿namespace Validator.Core.Builders;
+
 using System;
 using System.Linq;
-using Validator.Delegates;
-using Validator.Models;
-using Validator.Validators;
+using Validator.Core.Delegates;
+using Validator.Core.Models;
+using Validator.Core.Validators;
 
-internal abstract class ValidatorBuilder<TModel>
+public abstract class ValidatorBuilder<TModel>
 {
-    protected List<IValidator<TModel>> validators;
+    protected List<IValidatable<TModel>> validators;
 
     public ValidatorBuilder()
     {
         validators = new();
     }
 
-    public IEnumerable<IValidator<TModel>> Build()
+    public IEnumerable<IValidatable<TModel>> Build()
     {
         return validators;
     }
 }
 
-internal class ValidatorBuilder<TModel, TValue> : ValidatorBuilder<TModel>, IValidatorBuilder<TModel, TValue>
+public class ValidatorBuilder<TModel, TValue> : ValidatorBuilder<TModel>, IValidatorBuilder<TModel, TValue>
 {
-    readonly GetValueDelegate<TModel, TValue> getValue;
+    readonly GetValue<TModel, TValue> getValue;
     readonly PropertyName propertyName;
 
-    public ValidatorBuilder(GetValueDelegate<TModel, TValue> getValue, PropertyName propertyName)
+    public ValidatorBuilder(GetValue<TModel, TValue> getValue, PropertyName propertyName)
     {
         this.getValue = getValue;
         this.propertyName = propertyName;

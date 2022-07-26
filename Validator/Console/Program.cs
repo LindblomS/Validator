@@ -1,12 +1,10 @@
 ﻿using Validator;
-using Validator.Core.Models;
 
 var result = new ModelValidator().Validate(new(1235, null, null));
 
-foreach (var failure in result.Failures)
-    Console.WriteLine(failure);
-
-var f = Result.Failure();
+if (!result.Valid)
+    foreach (var failure in result.Failures)
+        Console.WriteLine(failure);
 
 Console.ReadKey();
 
@@ -39,6 +37,7 @@ class ModelValidator : Validator<Model>
 {
     public ModelValidator()
     {
-        For(model => model.Some).LessThanOrEqualsTo(1234);
+        For(model => model.Some).LessThan(100);
+        For(model => model.Some).GreaterThan(1).WithMessage("should atleast be something");
     }
 }

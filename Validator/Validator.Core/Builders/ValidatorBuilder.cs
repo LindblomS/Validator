@@ -21,7 +21,10 @@ public abstract class ValidatorBuilder<TModel>
     }
 }
 
-public class ValidatorBuilder<TModel, TValue> : ValidatorBuilder<TModel>, IValidatorBuilder<TModel, TValue>
+public class ValidatorBuilder<TModel, TValue> : 
+    ValidatorBuilder<TModel>, 
+    IValidatorBuilder<TModel, TValue>, 
+    IValidatorBuilderWithoutMessage<TModel, TValue>
 {
     readonly GetValue<TModel, TValue> getValue;
     readonly PropertyName propertyName;
@@ -32,19 +35,19 @@ public class ValidatorBuilder<TModel, TValue> : ValidatorBuilder<TModel>, IValid
         this.propertyName = propertyName;
     }
 
-    public IValidatorBuilder<TModel, TValue> Custom(Predicate<TValue> predicate)
+    public IValidatorBuilderWithoutMessage<TModel, TValue> Custom(Predicate<TValue> predicate)
     {
         validators.Add(new PredicateValidator<TModel, TValue>(getValue, predicate, propertyName));
         return this;
     }
 
-    public IValidatorBuilderWithMessage<TModel, TValue> If(Predicate<TModel> predicate)
+    public IValidatorBuilder<TModel, TValue> If(Predicate<TModel> predicate)
     {
         validators.Add(new ConditionalValidator<TModel>(predicate));
         return this;
     }
 
-    public IValidatorBuilderWithMessage<TModel, TValue> If(IValidatorBuilder<TModel> builder)
+    public IValidatorBuilder<TModel, TValue> If(IValidatorBuilder<TModel> builder)
     {
         foreach (var validator in builder.Build())
             validators.Add(new ConditionalValidator<TModel>(model => validator.Validate(model) is Success));
@@ -52,7 +55,7 @@ public class ValidatorBuilder<TModel, TValue> : ValidatorBuilder<TModel>, IValid
         return this;
     }
 
-    public IValidatorBuilderWithMessage<TModel, TValue> WithMessage(string message)
+    public IValidatorBuilder<TModel, TValue> WithMessage(string message)
     {
         if (validators.Last() is PredicateValidator<TModel, TValue> validator)
             validator.Message = message;

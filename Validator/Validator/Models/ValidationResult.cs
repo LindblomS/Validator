@@ -10,7 +10,7 @@ public class ValidationResult
         Failures = failures ?? Enumerable.Empty<Failure>();
     }
 
-    public bool Valid { get => Failures.Any(); }
+    public bool Valid { get => !Failures.Any(); }
     public IEnumerable<Failure> Failures { get; private set; }
 
     public static ValidationResult Empty()

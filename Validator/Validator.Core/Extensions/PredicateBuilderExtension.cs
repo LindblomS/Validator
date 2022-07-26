@@ -4,7 +4,7 @@ using Validator.Core.Builders;
 
 public static class PredicateBuilderExtension
 {
-    public static IValidatorBuilder<TModel, TValue> Build<TModel, TValue>(
+    public static IValidatorBuilderWithoutMessage<TModel, TValue> Build<TModel, TValue>(
         this IPredicateBuilder<TModel, TValue> builder,
         Predicate<TValue> predicate,
         string message)

@@ -11,6 +11,7 @@ public interface IValidatorBuilder<TModel, TValue> :
     IConditionalBuilder<TModel, TValue>,
     IValidatorBuilder<TModel>
 {
+    void Set(IValidator<TValue> validator);
 }
 
 public interface IValidatorBuilderWithoutMessage<TModel, TValue> : IValidatorBuilder<TModel, TValue>

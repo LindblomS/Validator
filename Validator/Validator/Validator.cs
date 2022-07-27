@@ -7,12 +7,11 @@ using Validator.Core.Models;
 using Validator.Core.Delegates;
 using Validator.Core.Validators;
 using Validator.Core.Builders;
-using Validator.Models;
 
 public abstract class Validator<TModel> : IValidator<TModel>
 {
-    List<ValidatorBuilder<TModel>> builders;
-    List<ValidatorBuilder<TModel>> Builders { get => builders ??= new(); }
+    List<IValidatorBuilder<TModel>> builders;
+    List<IValidatorBuilder<TModel>> Builders { get => builders ??= new(); }
 
     public IValidatorBuilder<TModel, TValue> For<TValue>(Expression<GetValue<TModel, TValue>> getValueExpression)
     {
@@ -27,10 +26,10 @@ public abstract class Validator<TModel> : IValidator<TModel>
         return builder;
     }
 
-    public ValidationResult Validate(TModel model)
+    public Result Validate(TModel model)
     {
         if (model is null)
-            return ValidationResult.Empty();
+            return Result.Success();
 
         var list = Builders.Select(builder => builder.Build());
 
@@ -42,7 +41,7 @@ public abstract class Validator<TModel> : IValidator<TModel>
         foreach (var setOfValidators in list)
             Validate(setOfValidators, model, failures);
 
-        return new ValidationResult(failures);
+        return new Result(failures);
     }
 
     static void Validate(IEnumerable<IValidatable<TModel>> validators, TModel model, List<Failure> failures)
@@ -51,7 +50,7 @@ public abstract class Validator<TModel> : IValidator<TModel>
         {
             if (validator is ConditionalValidator<TModel>)
             {
-                if (validator.Validate(model) is Success)
+                if (validator.Validate(model).Valid)
                     continue;
 
                 return;
@@ -59,9 +58,11 @@ public abstract class Validator<TModel> : IValidator<TModel>
 
             var result = validator.Validate(model);
 
-            if (result is Failure failure)
+            if (!result.Valid)
             {
-                failures.Add(failure);
+                foreach (var failure in result.Failures)
+                    failures.Add(failure);
+
                 return;
             }
         }

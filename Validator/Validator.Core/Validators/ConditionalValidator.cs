@@ -16,6 +16,6 @@ public class ConditionalValidator<TModel> : IValidatable<TModel>
     {
         return predicate(model)
             ? Result.Success()
-            : Result.Failure();
+            : Result.ConditionalFailure();
     }
 }

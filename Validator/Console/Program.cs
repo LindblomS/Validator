@@ -1,6 +1,6 @@
 ﻿using Validator;
 
-var result = new ModelValidator().Validate(new(1235, null, null));
+var result = new ModelValidator().Validate(new(123, "a", new("")));
 
 if (!result.Valid)
     foreach (var failure in result.Failures)
@@ -37,7 +37,16 @@ class ModelValidator : Validator<Model>
 {
     public ModelValidator()
     {
-        For(model => model.Some).LessThan(100);
-        For(model => model.Some).GreaterThan(1).WithMessage("should atleast be something");
+        For(model => model.Some).LessThan(200);
+        For(model => model.Name).NotEquals("a");
+        For(model => model.Sub).If(model => model.Name != "a").Set(new SubModelValidator());
+    }
+}
+
+class SubModelValidator : Validator<SubModel>
+{
+    public SubModelValidator()
+    {
+        For(model => model.Value).NotEmpty();
     }
 }

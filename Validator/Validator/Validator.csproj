@@ -11,4 +11,9 @@
 		<ProjectReference Include="..\Validator.Core\Validator.Core.csproj" />
 	</ItemGroup>
 
+
+	<ItemGroup>
+	  <Folder Include="Models\" />
+	</ItemGroup>
+
 </Project>

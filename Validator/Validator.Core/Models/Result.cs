@@ -1,44 +1,32 @@
 ﻿namespace Validator.Core.Models;
-public abstract class Result
+
+public class Result
 {
-    public static Success Success()
+    public Result(IEnumerable<Failure> failures)
     {
-        return new Success();
+        Failures = failures ?? Enumerable.Empty<Failure>();
     }
 
-    public static Failure Failure(string message, PropertyName propertyName)
+    protected Result()
     {
-        return new Failure(message, propertyName);
+        Failures = Enumerable.Empty<Failure>();
     }
 
-    public static Failure Failure()
+    public virtual bool Valid => !Failures.Any();
+    public IEnumerable<Failure> Failures { get; private set; }
+
+    public static Result Success()
     {
-        return new Failure();
+        return new Result();
+    }
+
+    public static Result Failure(string message, PropertyName propertyName)
+    {
+        return new Result(new Failure[] { new(message, propertyName) });
+    }
+
+    public static ConditionalFailure ConditionalFailure()
+    {
+        return new();
     }
 }
-
-public class Success : Result
-{
-}
-
-public class Failure : Result
-{
-    public Failure(string message, PropertyName propertyName)
-    {
-        Message = message;
-        PropertyName = propertyName;
-    }
-
-    public Failure()
-    {
-    }
-
-    public string Message { get; }
-    public PropertyName PropertyName { get; }
-
-    public override string ToString()
-    {
-        return $"{PropertyName.Value}: {Message}";
-    }
-}
-

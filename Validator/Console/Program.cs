@@ -37,8 +37,8 @@ class ModelValidator : Validator<Model>
 {
     public ModelValidator()
     {
-        For(model => model.Some).LessThan(200);
-        For(model => model.Name).NotEquals("a");
+        For(model => model.Some).LessThan(4);
+        For(model => model.Name).NotEquals("asd", StringComparison.InvariantCultureIgnoreCase).NotEquals("a");
         For(model => model.Sub).If(model => model.Name != "a").Set(new SubModelValidator());
     }
 }

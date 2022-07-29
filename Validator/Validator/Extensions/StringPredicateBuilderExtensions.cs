@@ -14,7 +14,7 @@ public static class StringPredicateBuilderExtensions
     public static IValidatorBuilderWithoutMessage<TModel, string> NotEquals<TModel>(
         this IPredicateBuilder<TModel, string> builder,
         string value,
-        StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
+        StringComparison comparison)
     {
         return builder.Build(x => !string.Equals(x, value, comparison), MessageHelper.NotEqualsMessage(value));
     }

@@ -6,16 +6,6 @@ using Validator.Helpers;
 
 public static class IntegerPredicateBuilderExtensions
 {
-    public static IValidatorBuilderWithoutMessage<TModel, int> NotEquals<TModel>(this IPredicateBuilder<TModel, int> builder, int value)
-    {
-        return builder.Build(x => x != value, MessageHelper.NotEqualsMessage(value));
-    }
-
-    public static IValidatorBuilderWithoutMessage<TModel, int?> NotEquals<TModel>(this IPredicateBuilder<TModel, int?> builder, int value)
-    {
-        return builder.Build(x => !x.HasValue || x.Value != value, MessageHelper.NotEqualsMessage(value));
-    }
-
     public static IValidatorBuilderWithoutMessage<TModel, int> LessThan<TModel>(this IPredicateBuilder<TModel, int> builder, int value)
     {
         return builder.Build(x => x < value, MessageHelper.NotLessThan(value));

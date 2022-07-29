@@ -1,6 +1,6 @@
-﻿namespace Validator.Core.Validators;
+﻿namespace Validator;
 
-using Validator.Core.Models;
+using Validator.Models;
 
 public interface IValidator<TModel>
 {

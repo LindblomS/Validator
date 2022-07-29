@@ -1,9 +1,10 @@
-﻿namespace Validator.Core.Validators;
+﻿namespace Validator.Validators;
 
-using Validator.Core.Delegates;
-using Validator.Core.Models;
+using Validator;
+using Validator.Delegates;
+using Validator.Models;
 
-public class NestedValidator<TModel, TValue> : IValidatable<TModel>
+internal class NestedValidator<TModel, TValue> : IValidator<TModel>
 {
     readonly IValidator<TValue> validator;
     readonly GetValue<TModel, TValue> getValue;

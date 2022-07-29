@@ -1,10 +1,10 @@
-﻿namespace Validator.Core.Helpers;
+﻿namespace Validator.Helpers;
 
-public static class MessageHelper
+internal static class MessageHelper
 {
     public static string NotEqualsMessage<TValue>(TValue value)
     {
-        return $"Was equal to {value}";
+        return $"Was equal to \"{value}\"";
     }
 
     public static string NotLessThan(int value)

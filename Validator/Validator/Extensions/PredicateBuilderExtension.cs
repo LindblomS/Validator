@@ -1,6 +1,6 @@
-﻿namespace Validator.Core.Extensions;
+﻿namespace Validator.Extensions;
 
-using Validator.Core.Builders;
+using Validator.Builders;
 
 public static class PredicateBuilderExtension
 {

@@ -1,13 +1,14 @@
-﻿namespace Validator.Core.Builders;
-using Validator.Core.Validators;
+﻿namespace Validator.Builders;
+
+using Validator;
 
 public interface IValidatorBuilder<TModel>
 {
-    IEnumerable<IValidatable<TModel>> Build();
+    IEnumerable<IValidator<TModel>> Build();
 }
 
-public interface IValidatorBuilder<TModel, TValue> : 
-    IPredicateBuilder<TModel, TValue>, 
+public interface IValidatorBuilder<TModel, TValue> :
+    IPredicateBuilder<TModel, TValue>,
     IConditionalBuilder<TModel, TValue>,
     IValidatorBuilder<TModel>
 {

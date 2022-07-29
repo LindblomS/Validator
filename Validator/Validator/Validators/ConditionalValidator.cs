@@ -1,9 +1,9 @@
-﻿namespace Validator.Core.Validators;
+﻿namespace Validator.Validators;
 
 using System;
-using Validator.Core.Models;
+using Validator.Models;
 
-public class ConditionalValidator<TModel> : IValidatable<TModel>
+internal class ConditionalValidator<TModel> : IValidator<TModel>
 {
     readonly Predicate<TModel> predicate;
 

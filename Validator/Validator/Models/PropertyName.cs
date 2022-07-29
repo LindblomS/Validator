@@ -1,4 +1,4 @@
-﻿namespace Validator.Core.Models;
+﻿namespace Validator.Models;
 
 public class PropertyName
 {

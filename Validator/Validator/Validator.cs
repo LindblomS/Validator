@@ -3,10 +3,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Validator.Core.Models;
-using Validator.Core.Delegates;
-using Validator.Core.Validators;
-using Validator.Core.Builders;
+using Validator.Builders;
+using Validator.Validators;
+using Validator.Delegates;
+using Validator.Models;
 
 public abstract class Validator<TModel> : IValidator<TModel>
 {
@@ -44,7 +44,7 @@ public abstract class Validator<TModel> : IValidator<TModel>
         return new Result(failures);
     }
 
-    static void Validate(IEnumerable<IValidatable<TModel>> validators, TModel model, List<Failure> failures)
+    static void Validate(IEnumerable<IValidator<TModel>> validators, TModel model, List<Failure> failures)
     {
         foreach (var validator in validators)
         {

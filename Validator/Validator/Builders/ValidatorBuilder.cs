@@ -1,18 +1,19 @@
-﻿namespace Validator.Core.Builders;
+﻿namespace Validator.Builders;
 
 using System;
 using System.Linq;
-using Validator.Core.Delegates;
-using Validator.Core.Models;
-using Validator.Core.Validators;
+using Validator;
+using Validator.Delegates;
+using Validator.Models;
+using Validator.Validators;
 
-public class ValidatorBuilder<TModel, TValue> : 
-    IValidatorBuilder<TModel, TValue>, 
+internal class ValidatorBuilder<TModel, TValue> :
+    IValidatorBuilder<TModel, TValue>,
     IValidatorBuilderWithoutMessage<TModel, TValue>
 {
     readonly GetValue<TModel, TValue> getValue;
     readonly PropertyName propertyName;
-    readonly List<IValidatable<TModel>> validators;
+    readonly List<IValidator<TModel>> validators;
 
     public ValidatorBuilder(GetValue<TModel, TValue> getValue, PropertyName propertyName)
     {
@@ -54,7 +55,7 @@ public class ValidatorBuilder<TModel, TValue> :
         return this;
     }
 
-    public IEnumerable<IValidatable<TModel>> Build()
+    public IEnumerable<IValidator<TModel>> Build()
     {
         return validators;
     }

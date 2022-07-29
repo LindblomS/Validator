@@ -1,8 +1,8 @@
 ﻿namespace Validator;
 
-using Validator.Core.Extensions;
-using Validator.Core.Helpers;
-using Validator.Core.Builders;
+using Validator.Extensions;
+using Validator.Builders;
+using Validator.Helpers;
 
 public static class StringPredicateBuilderExtensions
 {

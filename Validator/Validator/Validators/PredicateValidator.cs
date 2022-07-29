@@ -1,10 +1,10 @@
-﻿namespace Validator.Core.Validators;
+﻿namespace Validator.Validators;
 
 using System;
-using Validator.Core.Models;
-using Validator.Core.Delegates;
+using Validator.Delegates;
+using Validator.Models;
 
-public class PredicateValidator<TModel, TValue> : IValidatable<TModel>
+internal class PredicateValidator<TModel, TValue> : IValidator<TModel>
 {
     readonly GetValue<TModel, TValue> getValue;
     readonly Predicate<TValue> predicate;

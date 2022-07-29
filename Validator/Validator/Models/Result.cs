@@ -1,5 +1,4 @@
-﻿namespace Validator.Core.Models;
-
+﻿namespace Validator.Models;
 public class Result
 {
     public Result(IEnumerable<Failure> failures)

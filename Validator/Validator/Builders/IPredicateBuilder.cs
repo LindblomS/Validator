@@ -1,4 +1,4 @@
-﻿namespace Validator.Core.Builders;
+﻿namespace Validator.Builders;
 using System;
 
 public interface IPredicateBuilder<TModel, TValue>

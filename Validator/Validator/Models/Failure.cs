@@ -1,11 +1,11 @@
-﻿namespace Validator.Core.Models;
+﻿namespace Validator.Models;
 
 public class Failure
 {
     public Failure(string message, PropertyName propertyName)
     {
         Message = message;
-        PropertyName = propertyName;
+        PropertyName = propertyName.Value;
     }
 
     public Failure()
@@ -13,11 +13,11 @@ public class Failure
     }
 
     public string Message { get; }
-    public PropertyName PropertyName { get; }
+    public string PropertyName { get; }
 
     public override string ToString()
     {
-        return $"{PropertyName.Value}: {Message}";
+        return $"{PropertyName}: {Message}";
     }
 }
 

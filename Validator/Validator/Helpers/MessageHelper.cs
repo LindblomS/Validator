@@ -1,6 +1,6 @@
 ﻿namespace Validator.Helpers;
 
-internal static class MessageHelper
+public static class MessageHelper
 {
     public static string NotEqualsMessage<TValue>(TValue value)
     {

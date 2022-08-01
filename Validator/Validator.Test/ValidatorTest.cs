@@ -5,19 +5,44 @@ using NUnit.Framework;
 using Validator.Models;
 using Validator.Helpers;
 
+public static class ValidatorTestExtensions
+{
+    public static bool ShouldHaveFailureForProperty(this Result result, string propertyName)
+    {
+        return result.Failures.FirstOrDefault(failure => failure.PropertyName == propertyName) != default;
+    }
+}
+
 public class ValidatorTest
 {
-    public abstract class Common<TValidator> where TValidator : IValidator<TestModel>, new()
+    public class BaseTestValidator : Validator<TestModel<string>>
     {
-        public static Result Validate(TestModel model)
-        {
-            return new TValidator().Validate(model);
-        }
 
+    }
+
+    public abstract class Common<TValidator> where TValidator : BaseTestValidator, new()
+    {
         public static Result Validate(string value)
         {
-            return Validate(new TestModel { Value = value });
+            return Helper.Validate<TValidator, string>(value);
         }
+
+        public static Result Validate(TestModel<string> model)
+        {
+            return Helper.Validate<TValidator, string>(model);
+        }
+    }
+
+    [Test]
+    public void should_not_return_any_failures_when_model_is_null()
+    {
+        Assert.That(Helper.Validate<BaseTestValidator, string>(default(TestModel<string>)).Valid, Is.True);
+    }
+
+    [Test]
+    public void should_throw_InvalidOperationException_when_no_validators_are_found()
+    {
+        Assert.Throws<InvalidOperationException>(() => Helper.Validate<BaseTestValidator, string>("a"));
     }
 
     public class with_one_predicate
@@ -33,7 +58,7 @@ public class ValidatorTest
             [Test]
             public void should_have_failure_for_property_when_predicate_fail()
             {
-                Assert.That(Validate("").ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+                Assert.That(Validate("").ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
             }
 
             [Test]
@@ -42,7 +67,7 @@ public class ValidatorTest
                 Assert.That(Validate("").Failures, Has.Count.EqualTo(1));
             }
 
-            public class TestValidator : Validator<TestModel>
+            public class TestValidator : BaseTestValidator
             {
                 public TestValidator()
                 {
@@ -62,7 +87,7 @@ public class ValidatorTest
             [Test]
             public void should_have_failure_for_property_when_predicate_fail()
             {
-                Assert.That(Validate("").ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+                Assert.That(Validate("").ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
             }
 
             [Test]
@@ -77,7 +102,7 @@ public class ValidatorTest
                 Assert.That(Validate("").Failures.Single().Message == "message");
             }
 
-            public class TestValidator : Validator<TestModel>
+            public class TestValidator : BaseTestValidator
             {
                 public TestValidator()
                 {
@@ -93,7 +118,7 @@ public class ValidatorTest
                 [Test]
                 public void should_not_have_any_failures_when_condition_fail()
                 {
-                    Assert.That(Validate(default(TestModel)).Failures, Is.Empty);
+                    Assert.That(Validate(default(TestModel<string>)).Failures, Is.Empty);
                 }
 
                 [Test]
@@ -111,10 +136,10 @@ public class ValidatorTest
                 [Test]
                 public void should_have_failure_for_property_when_condition_pass_and_predicate_fail()
                 {
-                    Assert.That(Validate("").ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+                    Assert.That(Validate("").ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
                 }
 
-                public class TestValidator : Validator<TestModel>
+                public class TestValidator : BaseTestValidator
                 {
                     public TestValidator()
                     {
@@ -128,7 +153,7 @@ public class ValidatorTest
                 [Test]
                 public void should_not_have_any_failures_when_condition_fail()
                 {
-                    Assert.That(Validate(default(TestModel)).Failures, Is.Empty);
+                    Assert.That(Validate(default(TestModel<string>)).Failures, Is.Empty);
                 }
 
                 [Test]
@@ -146,7 +171,7 @@ public class ValidatorTest
                 [Test]
                 public void should_have_failure_for_property_when_condition_pass_and_predicate_fail()
                 {
-                    Assert.That(Validate("").ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+                    Assert.That(Validate("").ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
                 }
 
                 [Test]
@@ -155,7 +180,7 @@ public class ValidatorTest
                     Assert.That(Validate("").Failures.Single().Message == "message");
                 }
 
-                public class TestValidator : Validator<TestModel>
+                public class TestValidator : BaseTestValidator
                 {
                     public TestValidator()
                     {
@@ -191,16 +216,16 @@ public class ValidatorTest
             [Test]
             public void should_have_failure_for_property_when_first_predicate_fail()
             {
-                Assert.That(Validate("abc").ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+                Assert.That(Validate("abc").ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
             }
 
             [Test]
             public void should_have_failure_for_property_when_first_predicate_pass_and_second_fail()
             {
-                Assert.That(Validate("cba").ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+                Assert.That(Validate("cba").ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
             }
 
-            public class TestValidator : Validator<TestModel>
+            public class TestValidator : BaseTestValidator
             {
                 public TestValidator()
                 {
@@ -222,13 +247,13 @@ public class ValidatorTest
             [Test]
             public void should_have_failure_for_property_when_first_predicate_fail()
             {
-                Assert.That(Validate("abc").ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+                Assert.That(Validate("abc").ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
             }
 
             [Test]
             public void should_have_failure_for_property_when_first_predicate_pass_and_second_fail()
             {
-                Assert.That(Validate("cba").ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+                Assert.That(Validate("cba").ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
             }
 
             [Test]
@@ -243,7 +268,7 @@ public class ValidatorTest
                 Assert.That(Validate("cba").Failures.Single().Message == "message2");
             }
 
-            public class TestValidator : Validator<TestModel>
+            public class TestValidator : BaseTestValidator
             {
                 public TestValidator()
                 {
@@ -263,7 +288,7 @@ public class ValidatorTest
                 [Test]
                 public void should_not_have_any_failures_when_condition_fail()
                 {
-                    Assert.That(Validate(default(TestModel)).Failures.Any(), Is.False);
+                    Assert.That(Validate(default(TestModel<string>)).Failures.Any(), Is.False);
                 }
 
                 public class when_condition_pass : before
@@ -289,17 +314,17 @@ public class ValidatorTest
                     [Test]
                     public void should_have_failure_for_property_when_first_predicate_fail()
                     {
-                        Assert.That(Validate("abc").ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+                        Assert.That(Validate("abc").ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
                     }
 
                     [Test]
                     public void should_have_failure_for_property_when_first_predicate_pass_and_second_fail()
                     {
-                        Assert.That(Validate("cba").ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+                        Assert.That(Validate("cba").ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
                     }
                 }
 
-                public class TestValidator : Validator<TestModel>
+                public class TestValidator : BaseTestValidator
                 {
                     public TestValidator()
                     {
@@ -342,17 +367,17 @@ public class ValidatorTest
                     [Test]
                     public void should_have_failure_for_property_when_first_predicate_fail()
                     {
-                        Assert.That(Validate("abc").ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+                        Assert.That(Validate("abc").ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
                     }
 
                     [Test]
                     public void should_have_failure_for_property_when_first_predicate_pass_and_second_fail()
                     {
-                        Assert.That(Validate("cba").ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+                        Assert.That(Validate("cba").ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
                     }
                 }
 
-                public class TestValidator : Validator<TestModel>
+                public class TestValidator : BaseTestValidator
                 {
                     public TestValidator()
                     {
@@ -395,16 +420,16 @@ public class ValidatorTest
         [Test]
         public void should_have_failure_for_property_when_first_predicate_fail_and_second_pass()
         {
-            Assert.That(Validate("a").ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+            Assert.That(Validate("a").ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
         }
 
         [Test]
         public void should_have_failure_for_property_when_first_predicate_pass_and_second_fail()
         {
-            Assert.That(Validate("b").ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+            Assert.That(Validate("b").ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
         }
 
-        public class TestValidator : Validator<TestModel>
+        public class TestValidator : BaseTestValidator
         {
             public TestValidator()
             {
@@ -416,28 +441,33 @@ public class ValidatorTest
 
     public class with_nested_validator
     {
+        public static TestModel<string> CreateWithNestedModel(string value)
+        {
+            return new TestModel<string>(new TestModel<string>(value));
+        }
+
         public class with_no_condition : Common<with_no_condition.TestValidator>
         {
             [Test]
             public void should_not_have_any_failures_when_nested_validator_pass()
             {
-                Assert.That(Validate(new TestModel { NestedModel = new TestModel { Value = "a" } }).Failures, Is.Empty);
+                Assert.That(Validate(CreateWithNestedModel("a")).Failures, Is.Empty);
             }
 
             [Test]
             public void should_have_one_failure_when_nested_validator_fail()
             {
-                Assert.That(Validate(new TestModel { NestedModel = new TestModel { Value = "" } }).Failures, Has.Count.EqualTo(1));
+                Assert.That(Validate(CreateWithNestedModel("")).Failures, Has.Count.EqualTo(1));
             }
 
             [Test]
             public void should_have_failure_for_property_when_nested_validator_fail()
             {
-                Assert.That(Validate(new TestModel { NestedModel = new TestModel { Value = "" } })
-                    .ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+                Assert.That(Validate(CreateWithNestedModel(""))
+                    .ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
             }
 
-            public class TestValidator : Validator<TestModel>
+            public class TestValidator : BaseTestValidator
             {
                 public TestValidator()
                 {
@@ -451,7 +481,7 @@ public class ValidatorTest
             [Test]
             public void should_not_have_any_failures_when_condition_fail()
             {
-                Assert.That(Validate(default(TestModel)).Failures, Is.Empty);
+                Assert.That(Validate(default(TestModel<string>)).Failures, Is.Empty);
             }
 
             public class when_condition_pass : with_condition
@@ -459,24 +489,24 @@ public class ValidatorTest
                 [Test]
                 public void should_not_have_any_failures_when_nested_validator_pass()
                 {
-                    Assert.That(Validate(new TestModel { NestedModel = new TestModel { Value = "a" } }).Failures, Is.Empty);
+                    Assert.That(Validate(CreateWithNestedModel("a")).Failures, Is.Empty);
                 }
 
                 [Test]
                 public void should_have_one_failure_when_nested_validator_fail()
                 {
-                    Assert.That(Validate(new TestModel { NestedModel = new TestModel { Value = "" } }).Failures, Has.Count.EqualTo(1));
+                    Assert.That(Validate(CreateWithNestedModel("")).Failures, Has.Count.EqualTo(1));
                 }
 
                 [Test]
                 public void should_have_failure_for_property_when_nested_validator_fail()
                 {
-                    Assert.That(Validate(new TestModel { NestedModel = new TestModel { Value = "" } })
-                        .ShouldHaveFailureForProperty(nameof(TestModel.Value)));
+                    Assert.That(Validate(CreateWithNestedModel(""))
+                        .ShouldHaveFailureForProperty(nameof(TestModel<string>.Value)));
                 }
             }
 
-            public class TestValidator : Validator<TestModel>
+            public class TestValidator : BaseTestValidator
             {
                 public TestValidator()
                 {
@@ -487,7 +517,7 @@ public class ValidatorTest
             }
         }
 
-        public class NestedValidator : Validator<TestModel>
+        public class NestedValidator : BaseTestValidator
         {
             public NestedValidator()
             {
@@ -495,20 +525,6 @@ public class ValidatorTest
             }
         }
     }
-}
-
-public static class ValidatorTestExtensions
-{
-    public static bool ShouldHaveFailureForProperty(this Result result, string propertyName)
-    {
-        return result.Failures.FirstOrDefault(failure => failure.PropertyName == propertyName) != default;
-    }
-}
-
-public class TestModel
-{
-    public string Value { get; set; }
-    public TestModel NestedModel { get; set; }
 }
 
 

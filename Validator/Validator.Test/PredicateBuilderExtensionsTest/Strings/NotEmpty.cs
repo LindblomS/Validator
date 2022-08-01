@@ -1,7 +1,7 @@
 ﻿namespace Validator.Test.PredicateBuilderExtensionsTest.Strings;
 
 using NUnit.Framework;
-using Validator.Test.PredicateBuilderExtensionsTest;
+using Validator.Test;
 
 public class NotEmpty
 {

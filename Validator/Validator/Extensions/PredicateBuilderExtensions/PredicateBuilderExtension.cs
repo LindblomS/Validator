@@ -1,4 +1,4 @@
-﻿namespace Validator.Extensions;
+﻿namespace Validator.Extensions.PredicateBuilderExtensions;
 
 using Validator.Builders;
 

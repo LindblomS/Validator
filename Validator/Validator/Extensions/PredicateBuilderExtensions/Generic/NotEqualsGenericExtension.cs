@@ -2,15 +2,10 @@
 
 using Validator.Builders;
 using Validator.Helpers;
-using Validator.Extensions;
+using Validator.Extensions.PredicateBuilderExtensions;
 
-public static class GenericPredicateBuilderExtensions
+public static class NotEqualsGenericExtension
 {
-    public static IValidatorBuilderWithoutMessage<TModel, TValue> NotNull<TModel, TValue>(this IPredicateBuilder<TModel, TValue> builder)
-    {
-        return builder.Build(x => x is not null, MessageHelper.Null());
-    }
-
     public static IValidatorBuilderWithoutMessage<TModel, TValue> NotEquals<TModel, TValue>(this IPredicateBuilder<TModel, TValue> builder, TValue value)
     {
         return builder.Build(x => !x.Equals(value), MessageHelper.NotEqualsMessage(value));

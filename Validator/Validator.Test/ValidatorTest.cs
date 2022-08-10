@@ -3,7 +3,7 @@
 using Validator;
 using NUnit.Framework;
 using Validator.Models;
-using Validator.Helpers;
+using Validator.Resources;
 
 public static class ValidatorTestExtensions
 {
@@ -204,7 +204,7 @@ public class ValidatorTest
             [Test]
             public void should_only_have_failure_for_first_predicate_when_both_fail()
             {
-                Assert.That(Validate("abc").Failures.Single().Message == MessageHelper.NotEqualsMessage("abc"));
+                Assert.That(Validate("abc").Failures.Single().Message == MessageManager.NotEquals("abc"));
             }
 
             [Test]
@@ -302,7 +302,7 @@ public class ValidatorTest
                     [Test]
                     public void should_only_have_failure_for_first_predicate_when_both_fail()
                     {
-                        Assert.That(Validate("abc").Failures.Single().Message == MessageHelper.NotEqualsMessage("abc"));
+                        Assert.That(Validate("abc").Failures.Single().Message == MessageManager.NotEquals("abc"));
                     }
 
                     [Test]
@@ -355,7 +355,7 @@ public class ValidatorTest
                     [Test]
                     public void should_only_have_failure_for_first_predicate_when_both_fail()
                     {
-                        Assert.That(Validate("abc").Failures.Single().Message == MessageHelper.NotEqualsMessage("abc"));
+                        Assert.That(Validate("abc").Failures.Single().Message == MessageManager.NotEquals("abc"));
                     }
 
                     [Test]

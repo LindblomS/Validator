@@ -1,7 +1,7 @@
 ﻿namespace Validator;
 
 using Validator.Builders;
-using Validator.Helpers;
+using Validator.Resources;
 using Validator.Extensions.PredicateBuilderExtensions;
 
 public static class NotEqualsExtension
@@ -11,6 +11,6 @@ public static class NotEqualsExtension
        string value,
        StringComparison comparison)
     {
-        return builder.Build(x => !string.Equals(x, value, comparison), MessageHelper.NotEqualsMessage(value));
+        return builder.Build(x => !string.Equals(x, value, comparison), MessageManager.NotEquals(value));
     }
 }

@@ -3,7 +3,7 @@
 using NUnit.Framework;
 using Validator.Test;
 
-public class NotEmpty
+public class NotEmptyTest
 {
     [TestCase("", false, Description = "empty")]
     [TestCase(" ", false, Description = "whitespace")]

@@ -1,7 +1,9 @@
-﻿using Validator;
+﻿using System.Globalization;
+using Validator;
+
+CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("en");
 
 var result = new ModelValidator().Validate(new(123, "a", new("")));
-
 if (!result.Valid)
     foreach (var failure in result.Failures)
         Console.WriteLine(failure);

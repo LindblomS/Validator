@@ -3,7 +3,7 @@
 using NUnit.Framework;
 using Validator.Test;
 
-public class LessThan
+public class LessThanTest
 {
     [TestCase(11, false)]
     [TestCase(10, false)]

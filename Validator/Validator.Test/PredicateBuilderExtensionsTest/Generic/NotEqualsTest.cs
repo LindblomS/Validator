@@ -2,7 +2,7 @@
 
 using NUnit.Framework;
 
-public class NotEquals
+public class NotEqualsTest
 {
     [TestCase(true)]
     [TestCase(false)]

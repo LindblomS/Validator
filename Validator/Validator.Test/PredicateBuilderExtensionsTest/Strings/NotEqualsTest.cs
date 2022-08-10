@@ -3,7 +3,7 @@
 using NUnit.Framework;
 using Validator.Test;
 
-public class NotEquals
+public class NotEqualsTest
 {
     [TestCase("abc", false)]
     [TestCase("cba", true)]

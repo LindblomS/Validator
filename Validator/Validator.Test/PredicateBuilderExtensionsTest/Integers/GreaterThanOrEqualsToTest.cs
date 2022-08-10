@@ -3,7 +3,7 @@
 using NUnit.Framework;
 using Validator.Test;
 
-public class GreaterThanOrEqualsTo
+public class GreaterThanOrEqualsToTest
 {
     [TestCase(11, true)]
     [TestCase(10, true)]
